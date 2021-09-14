@@ -1,0 +1,220 @@
+#+TITLE: Automation Script
+
+* setup
+make sure to change the  $HOME/something/something/.... to where you want it to put the files
+#+NAME: buildPath
+#+begin_src bash
+echo "$HOME/git/projects/customOS/live-ubuntu-from-scratch/"
+#+end_src
+
+#+RESULTS: buildPath
+: /home/erik/git/projects/customOS/live-ubuntu-from-scratch/
+
+
+
+
+* debootstrap step
+
+#+begin_src bash :noweb yes :eval never
+sudo debootstrap \
+   --arch=amd64 \
+   --variant=minbase \
+   focal \
+   <<buildPath()>>chroot \
+   http://us.archive.ubuntu.com/ubuntu/
+#+end_src
+
+
+
+#+begin_src bash :noweb yes :eval never
+sudo mount --bind /dev <<buildPath()>>chroot/dev
+sudo mount --bind /run <<buildPath()>>chroot/run
+#+end_src
+
+
+#+begin_src bash :noweb yes
+abduco -An chroot uxterm -e sudo chroot <<buildPath()>>chroot
+#+end_src
+
+#+RESULTS:
+
+* in chroot env
+
+
+- this is inside of a new terminal, the one were you ran the last command
+
+#+begin_src bash :eval never
+
+mount none -t proc /proc
+mount none -t sysfs /sys
+mount none -t devpts /dev/pts
+export HOME=/root
+export LC_ALL=C
+
+#+end_src
+
+#+begin_src bash
+dmenu -p "custom hostname"|xclip
+#+end_src
+
+
+* packages and realated configuration
+
+
+#+begin_src bash :eval never
+cat <<EOF > /etc/apt/sources.list
+# main
+deb http://us.archive.ubuntu.com/ubuntu/ focal main restricted universe multiverse
+deb-src http://us.archive.ubuntu.com/ubuntu/ focal main restricted universe multiverse
+
+# security
+deb http://us.archive.ubuntu.com/ubuntu/ focal-security main restricted universe multiverse
+deb-src http://us.archive.ubuntu.com/ubuntu/ focal-security main restricted universe multiverse
+
+# uppdates
+deb http://us.archive.ubuntu.com/ubuntu/ focal-updates main restricted universe multiverse
+deb-src http://us.archive.ubuntu.com/ubuntu/ focal-updates main restricted universe multiverse
+EOF
+#+end_src
+
+* update package-source list
+
+#+begin_src bash
+apt-get update
+#+end_src
+
+
+** systemd
+
+#+BEGIN_QUOTE
+systemd is a system and service manager for Linux. It provides aggressive parallelization capabilities, uses socket and D-Bus activation for starting services, offers on-demand starting of daemons, keeps track of processes using Linux control groups, maintains mount and automount points and implements an elaborate transactional dependency-based service control logic.
+#+END_QUOTE
+
+#+begin_src bash :eval never
+apt-get install -y libterm-readline-gnu-perl systemd-sysv
+#+end_src
+
+* optional packages
+#+begin_src bash :eval never
+apt-get install -y vim vi nano neovim
+#+end_src
+
+* Configure machine-id and divert
+#+begin_quote
+The /etc/machine-id file contains the unique machine ID of the local system that is set during installation or boot. The machine ID is a single newline-terminated, hexadecimal, 32-character, lowercase ID. When decoded from hexadecimal, this corresponds to a 16-byte/128-bit value. This ID may not be all zeros.
+#+end_quote
+
+#+begin_src bash :eval never
+dbus-uuidgen > /etc/machine-id
+ln -fs /etc/machine-id /var/lib/dbus/machine-id
+#+end_src
+
+
+
+
+#+begin_quote
+dpkg-divert is the utility used to set up and update the list of diversions.
+#+end_quote
+
+#+begin_src bash :eval never
+dpkg-divert --local --rename --add /sbin/initctl
+ln -s /bin/true /sbin/initctl
+#+end_src
+
+
+
+
+
+
+
+
+
+** Upgrade packages
+#+begin_src bash
+apt-get -y upgrade
+#+end_src
+
+
+** Install packages needed for Live System
+
+#+begin_src bash
+apt-get install -y \
+	sudo \
+	casper \
+	lupin-casper \
+	discover \
+	laptop-detect \
+	os-prober \
+	network-manager \
+	resolvconf \
+	net-tools \
+	wireless-tools \
+	locales \
+	grub-common \
+	grub-gfxpayload-lists \
+	grub-pc \
+	grub-pc-bin \
+	grub2-common \
+	cmst
+#+end_src
+
+#+begin_src bash
+apt-get install -y --no-install-recommends linux-generic ubuntu-standard
+#+end_src
+
+
+
+
+* installer
+this installs, among others , the kde frontend for the installer,
+I have changed this from the gtk frontend because i prefer kde based systems
+
+#+begin_src bash
+apt-get install -y \
+   ubiquity \
+   ubiquity-casper \
+   ubiquity-frontend-kde \
+   ubiquity-slideshow-ubuntu \
+   ubiquity-ubuntu-artwork
+#+end_src
+
+
+#+begin_src bash
+apt-get install -y \
+	clamav-daemon \
+	kitty \
+	apt-transport-https \
+	curl \
+	nano \
+	less \
+	aptitude \
+	xterm \
+	fzf fzy
+
+#+end_src
+
+
+#+begin_src bash
+
+
+
+
+#+end_src
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.

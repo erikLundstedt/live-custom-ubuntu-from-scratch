@@ -1,0 +1,73 @@
+#+TITLE: personal linuxdistribution based on ubuntu
+#+DATE: 210914
+#+author:    Erik Lundstedt
+#+email:     erik@lundstedt.it
+
+
+
+
+where it says program,software etc, read documentation
+
+documentation for personal linuxdistribution based on ubuntu
+Copyright (C) 2021 Erik Lundstedt
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+
+
+
+* index :toc:
+- [[#requirements-and-prerequisites][requirements and prerequisites]]
+  - [[#requirements][requirements]]
+  - [[#knowlageprerquisites][(knowlage)prerquisites]]
+  - [[#softwareprerquisites][(software)prerquisites]]
+- [[#steps22][steps]]
+
+* requirements and prerequisites
+
+** requirements
+- [X] debian or ubuntu based GNU/Linux
+- [X] bash(im using zsh but it should be as good as the same)
+
+** (knowlage)prerquisites
+- [X] working knowlage of bash as booth a scripting language and a shell(interactive)language as most of the stepps are in a terminal
+** (software)prerquisites
+- [X] binutils
+- [X] debootstrap
+- [X] squashfs-tools
+- [X] xorriso
+- [X] grub-pc-bin
+- [X] grub-efi-amd64-bin
+- [X] mtools
+
+  the method found on the website as of Tue Sep 14 2021 is
+#+BEGIN_EXAMPLE bash
+sudo apt-get install \
+    binutils \
+    debootstrap \
+    squashfs-tools \
+    xorriso \
+    grub-pc-bin \
+    grub-efi-amd64-bin \
+    mtools
+#+END_EXAMPLE
+this will automaticaly install all needed packages on a debian or ubuntu based GNU/Linux system
+
+
+
+
+* steps[2/2]
+- [X] install software prerequisites
+- [X] fork and clone the repository
