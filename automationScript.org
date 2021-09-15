@@ -279,9 +279,321 @@ pacget-git
 
 
 
+* end stage
 
 
 
+
+** install java8 jdk and jre
+
+#+begin_src emacs-lisp :results none
+(+tmux/run "apt-get install -y \
+    openjdk-8-jdk \
+    openjdk-8-jre ")
+#+end_src
+
+
+
+
+** remove unused software
+#+begin_src emacs-lisp :results none
+(+tmux/run "apt-get purge -y \
+    transmission-gtk \
+    transmission-common \
+    gnome-mahjongg \
+    gnome-mines \
+    gnome-sudoku \
+    aisleriot \
+    hitori")
+#+end_src
+
+
+** autoremove
+
+#+begin_src emacs-lisp :results none
+(+tmux/run "apt-get autoremove -y")
+#+end_src
+
+#+begin_src emacs-lisp :results none
+(+tmux/run "dpkg-reconfigure locales")
+#+end_src
+
+#+begin_src emacs-lisp :results none
+(+tmux/run "cat <<EOF > /etc/NetworkManager/NetworkManager.conf
+[main]
+rc-manager=resolvconf
+plugins=ifupdown,keyfile
+dns=dnsmasq
+
+[ifupdown]
+managed=false
+EOF ")
+#+end_src
+
+#+begin_src emacs-lisp :results none
+(+tmux/run "dpkg-reconfigure network-manager ")
+#+end_src
+** Cleanup the chroot environment
+
+
+
+#+begin_src emacs-lisp :results none
+(+tmux/run "truncate -s 0 /etc/machine-id")
+#+end_src
+
+#+begin_src emacs-lisp :results none
+(+tmux/run "rm /sbin/initctl
+
+dpkg-divert --rename --remove /sbin/initctl
+")
+#+end_src
+
+#+begin_src emacs-lisp :results none
+(+tmux/run "
+apt-get clean
+
+#rm -rf /tmp/* ~/.bash_history
+
+umount /proc
+
+umount /sys
+
+umount /dev/pts
+
+#export HISTSIZE=0
+
+exit
+")
+#+end_src
+
+
+** unbind mountpoints
+#+begin_src emacs-lisp :results none :noweb yes
+(+tmux/run "sudo umount <<buildPath()>>chroot/dev")
+#+end_src
+
+#+begin_src emacs-lisp :tangle yes :noweb yes
+ (+tmux/run "sudo umount <<buildPath()>>chroot/run")
+
+#+end_src
+
+#+RESULTS:
+
+
+
+** Create the CD image directory and populate it
+
+#+begin_src emacs-lisp :results none :noweb yes
+(+tmux/run "cd <<buildPath()>>")
+#+end_src
+
+#+begin_src emacs-lisp :results none
+(+tmux/run "sudo mkdir -p image/{casper,isolinux,install}")
+#+end_src
+
+#+begin_src emacs-lisp :results none
+(+tmux/run "
+sudo cp chroot/boot/vmlinuz-**-**-generic image/casper/vmlinuz
+sudo cp chroot/boot/initrd.img-**-**-generic image/casper/initrd
+")
+#+end_src
+
+#+begin_src emacs-lisp :results none
+(+tmux/run "sudo cp chroot/boot/memtest86+.bin image/install/memtest86+")
+#+end_src
+
+#+begin_src emacs-lisp :results none
+(+tmux/run "
+sudo  wget --progress=dot https://www.memtest86.com/downloads/memtest86-usb.zip -O image/install/memtest86-usb.zip
+
+sudo unzip -p image/install/memtest86-usb.zip memtest86-usb.img > image/install/memtest86
+
+sudo rm -f image/install/memtest86-usb.zip
+")
+#+end_src
+
+
+* GRUB menu configuration
+
+
+#+begin_src emacs-lisp :results none :noweb yes
+(+tmux/run "cd <<buildPath()>>")
+#+end_src
+
+
+#+begin_src emacs-lisp :results none
+(+tmux/run "touch image/ubuntu")
+#+end_src
+#+begin_src emacs-lisp :results none
+(+tmux/run "cat <<EOF >image/isolinux/grub.cfg
+
+search --set=root --file /ubuntu
+
+insmod all_video
+
+set default=\"0\"
+set timeout=30
+
+menuentry \"Try Ubuntu FS without installing\" {
+   linux /casper/vmlinuz boot=casper nopersistent toram quiet splash ---
+   initrd /casper/initrd
+}
+
+menuentry \"Install Ubuntu FS\" {
+   linux /casper/vmlinuz boot=casper only-ubiquity quiet splash ---
+   initrd /casper/initrd
+}
+
+menuentry \"Check disc for defects\" {
+   linux /casper/vmlinuz boot=casper integrity-check quiet splash ---
+   initrd /casper/initrd
+}
+
+menuentry \"Test memory Memtest86+ (BIOS)\" {
+   linux16 /install/memtest86+
+}
+
+menuentry \"Test memory Memtest86 (UEFI, long load time)\" {
+   insmod part_gpt
+   insmod search_fs_uuid
+   insmod chain
+   loopback loop /install/memtest86
+   chainloader (loop,gpt1)/efi/boot/BOOTX64.efi
+}
+EOF"
+)
+#+end_src
+
+
+* Create manifest
+
+
+
+#+begin_src emacs-lisp :results none :noweb yes
+(+tmux/run "cd <<buildPath()>>")
+#+end_src
+
+#+begin_src emacs-lisp :results none
+(+tmux/run "sudo chroot chroot dpkg-query -W --showformat='${Package} ${Version}\n' | sudo tee image/casper/filesystem.manifest
+
+sudo cp -v image/casper/filesystem.manifest image/casper/filesystem.manifest-desktop
+
+sudo sed -i '/ubiquity/d' image/casper/filesystem.manifest-desktop
+
+sudo sed -i '/casper/d' image/casper/filesystem.manifest-desktop
+
+sudo sed -i '/discover/d' image/casper/filesystem.manifest-desktop
+
+sudo sed -i '/laptop-detect/d' image/casper/filesystem.manifest-desktop
+
+sudo sed -i '/os-prober/d' image/casper/filesystem.manifest-desktop")
+#+end_src
+* Compress the chroot
+
+#+begin_src emacs-lisp :results none :noweb yes
+(+tmux/run "cd <<buildPath()>>")
+#+end_src
+#+begin_src emacs-lisp :results none
+(+tmux/run "sudo mksquashfs chroot image/casper/filesystem.squashfs")
+#+end_src
+
+#+BEGIN_COMMENT
+Squashfs is a highly compressed read-only filesystem for Linux. It uses zlib compression to compress both files, inodes and directories. Inodes in the system are very small and all blocks are packed to minimize data overhead. Block sizes greater than 4K are supported up to a maximum of 64K. Squashfs is intended for general read-only filesystem use, for archival use (i.e. in cases where a .tar.gz file may be used), and in constrained block device/memory systems (e.g. embedded systems) where low overhead is needed.
+#+END_COMMENT
+
+
+
+#+begin_src emacs-lisp :results none
+(+tmux/run "printf $(sudo du -sx --block-size=1 chroot | cut -f1) > image/casper/filesystem.size")
+#+end_src
+* Create diskdefines
+
+#+begin_src emacs-lisp :results none :noweb yes
+(+tmux/run "cd <<buildPath()>>")
+#+end_src
+
+#+begin_src emacs-lisp :results none
+(+tmux/run "cat <<EOF > image/README.diskdefines
+#define DISKNAME  Ubuntu from scratch
+#define TYPE  binary
+#define TYPEbinary  1
+#define ARCH  amd64
+#define ARCHamd64  1
+#define DISKNUM  1
+#define DISKNUM1  1
+#define TOTALNUM  0
+#define TOTALNUM0  1
+EOF")
+#+end_src
+
+* Create ISO Image for a LiveCD (BIOS + UEFI)
+
+#+begin_src emacs-lisp :results none :noweb yes
+(+tmux/run "cd <<buildPath()>>/image")
+#+end_src
+
+
+#+begin_src emacs-lisp :results none
+(+tmux/run "grub-mkstandalone \
+   --format=x86_64-efi \
+   --output=isolinux/bootx64.efi \
+   --locales=\"\" \
+   --fonts=\"\" \
+   \"boot/grub/grub.cfg=isolinux/grub.cfg\"
+")
+#+end_src
+#+begin_src emacs-lisp :results none
+(+tmux/run "(
+   cd isolinux && \
+   dd if=/dev/zero of=efiboot.img bs=1M count=10 && \
+   sudo mkfs.vfat efiboot.img && \
+   LC_CTYPE=C mmd -i efiboot.img efi efi/boot && \
+   LC_CTYPE=C mcopy -i efiboot.img ./bootx64.efi ::efi/boot/
+)")
+#+end_src
+#+begin_src emacs-lisp :results none
+(+tmux/run "grub-mkstandalone \
+   --format=i386-pc \
+   --output=isolinux/core.img \
+   --install-modules=\"linux16 linux normal iso9660 biosdisk memdisk search tar ls\" \
+   --modules=\"linux16 linux normal iso9660 biosdisk search\" \
+   --locales=\"\" \
+   --fonts=\"\" \
+   \"boot/grub/grub.cfg=isolinux/grub.cfg\"
+")
+#+end_src
+#+begin_src emacs-lisp :results none
+(+tmux/run "cat /usr/lib/grub/i386-pc/cdboot.img isolinux/core.img > isolinux/bios.img")
+#+end_src
+#+begin_src emacs-lisp :results none
+(+tmux/run "sudo /bin/bash -c \"(find . -type f -print0 | xargs -0 md5sum | grep -v -e 'md5sum.txt' -e 'bios.img' -e 'efiboot.img' > md5sum.txt)\" ")
+#+end_src
+#+begin_src emacs-lisp :results none
+(+tmux/run "sudo xorriso \
+   -as mkisofs \
+   -iso-level 3 \
+   -full-iso9660-filenames \
+   -volid \"Ubuntu from scratch\" \
+   -output \"../ubuntu-from-scratch.iso\" \
+   -eltorito-boot boot/grub/bios.img \
+      -no-emul-boot \
+      -boot-load-size 4 \
+      -boot-info-table \
+      --eltorito-catalog boot/grub/boot.cat \
+      --grub2-boot-info \
+      --grub2-mbr /usr/lib/grub/i386-pc/boot_hybrid.img \
+   -eltorito-alt-boot \
+      -e EFI/efiboot.img \
+      -no-emul-boot \
+   -append_partition 2 0xef isolinux/efiboot.img \
+   -m \"isolinux/efiboot.img\" \
+   -m \"isolinux/bios.img\" \
+   -graft-points \
+      \"/EFI/efiboot.img=isolinux/efiboot.img\" \
+      \"/boot/grub/bios.img=isolinux/bios.img\" \
+      \".\"
+")
+#+end_src
 
 
 

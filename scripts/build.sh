@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 
 set -e                  # exit on error
 set -o pipefail         # exit on pipeline error
@@ -98,9 +98,9 @@ function check_config() {
 
 function setup_host() {
     echo "=====> running setup_host ..."
-    sudo apt update
-    sudo apt install -y binutils debootstrap squashfs-tools xorriso grub-pc-bin grub-efi-amd64-bin mtools
-    sudo mkdir -p chroot
+    #sudo apt update
+    #sudo apt install -y binutils debootstrap squashfs-tools xorriso grub-pc-bin grub-efi-amd64-bin mtools
+    ##sudo mkdir -p chroot
 }
 
 function debootstrap() {
