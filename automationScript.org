@@ -232,20 +232,26 @@ apt-get install -y \
 #+begin_src elisp
 (+tmux/run "aptitude install git");;install git
 #+end_src
-#+begin_src emacs-lisp :tangle yes
+
+#+RESULTS:
+
+#+begin_src emacs-lisp :results none
 (+tmux/run "pacstall -I git");;reinstall git with superior package-manager(compile git)
 #+end_src
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :results none
 (+tmux/run "pacstall -I pacget-git");;install my personal TUI frontend for pacstall
 #+end_src
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :results none
+(+tmux/run "pacstall -I neovim-git");;install emacs-git
+#+end_src
+#+begin_src emacs-lisp :results none
 (+tmux/run "pacstall -I emacs-git");;install emacs-git
 #+end_src
-#+begin_src emacs-lisp :tangle yes
+not installing yet
+#+begin_src emacs-lisp :results none
 (+tmux/run "aptitude install yadm")
 #+end_src
-
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :results none
 (+tmux/run "pacstall -I awesome-git");;install awesome-git
 #+end_src
 
@@ -260,11 +266,14 @@ pacget-git
 
 #+RESULTS:
 
-/usr/share/pacstall/repo/pacstallrepo.txt
 
 
 
+#+begin_src emacs-lisp :results none
+(+tmux/run "printf \"\n%s\" \"https://gitlab.com/Erik.Lundstedt/pacstall-programs-erik-lundstedt/raw/master/\" >> /usr/share/pacstall/repo/pacstallrepo.txt")
 
+(+tmux/run "cat /usr/share/pacstall/repo/pacstallrepo.txt")
+#+end_src
 
 
 
