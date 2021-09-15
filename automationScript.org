@@ -267,11 +267,13 @@ pacget-git
 #+RESULTS:
 
 
+#+begin_src emacs-lisp :results none
+(+tmux/run "pacget ")
+#+end_src
 
 
 #+begin_src emacs-lisp :results none
 (+tmux/run "printf \"\n%s\" \"https://gitlab.com/Erik.Lundstedt/pacstall-programs-erik-lundstedt/raw/master/\" >> /usr/share/pacstall/repo/pacstallrepo.txt")
-
 (+tmux/run "cat /usr/share/pacstall/repo/pacstallrepo.txt")
 #+end_src
 
