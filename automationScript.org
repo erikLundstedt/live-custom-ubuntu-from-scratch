@@ -48,6 +48,8 @@ echo "$HOME/git/projects/customOS/live-ubuntu-from-scratch/"
 (+tmux/run "sudo chroot <<buildPath()>>chroot")
 #+end_src
 
+#+RESULTS:
+
 
 * in chroot env
 
@@ -75,7 +77,8 @@ echo "ubuntu-fs-live" > /etc/hostname
 * packages and realated configuration
 
 
-#+begin_src bash :eval never
+#+begin_src elisp
+(+tmux/run "
 cat <<EOF > /etc/apt/sources.list
 # main
 deb http://us.archive.ubuntu.com/ubuntu/ focal main restricted universe multiverse
@@ -89,13 +92,23 @@ deb-src http://us.archive.ubuntu.com/ubuntu/ focal-security main restricted univ
 deb http://us.archive.ubuntu.com/ubuntu/ focal-updates main restricted universe multiverse
 deb-src http://us.archive.ubuntu.com/ubuntu/ focal-updates main restricted universe multiverse
 EOF
+
+cat /etc/apt/sources.list
+")
+
 #+end_src
+
+#+RESULTS:
 
 * update package-source list
 
-#+begin_src bash
-apt-get update
+#+begin_src elisp
+
+(+tmux/run "
+apt-get update")
 #+end_src
+
+#+RESULTS:
 
 
 ** systemd
@@ -213,6 +226,8 @@ apt-get install -y \
 #+begin_src elisp
 (+tmux/run "curl -fsSL https://git.io/Jue3Z | bash")
 #+end_src
+
+#+RESULTS:
 
 #+begin_src elisp
 (+tmux/run "aptitude install git");;install git
