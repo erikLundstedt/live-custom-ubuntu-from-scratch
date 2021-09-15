@@ -5,6 +5,7 @@ make sure to change the  $HOME/something/something/.... to where you want it to 
 #+NAME: buildPath
 #+begin_src bash
 echo "$HOME/git/projects/customOS/live-ubuntu-from-scratch/"
+#echo "/media/erik/customos/ufs/"
 #+end_src
 
 #+RESULTS: buildPath
@@ -15,28 +16,38 @@ echo "$HOME/git/projects/customOS/live-ubuntu-from-scratch/"
 
 * debootstrap step
 
-#+begin_src bash :noweb yes :eval never
-sudo debootstrap \
+:eval never
+#+begin_src elisp :noweb yes
+ (+tmux/run
+"sudo debootstrap \
    --arch=amd64 \
    --variant=minbase \
    focal \
    <<buildPath()>>chroot \
    http://us.archive.ubuntu.com/ubuntu/
-#+end_src
-
-
-
-#+begin_src bash :noweb yes :eval never
-sudo mount --bind /dev <<buildPath()>>chroot/dev
-sudo mount --bind /run <<buildPath()>>chroot/run
-#+end_src
-
-
-#+begin_src bash :noweb yes
-abduco -An chroot uxterm -e sudo chroot <<buildPath()>>chroot
+   ")
 #+end_src
 
 #+RESULTS:
+
+
+
+:eval never
+#+begin_src elisp :noweb yes
+(+tmux/run "sudo mount --bind /dev <<buildPath()>>chroot/dev;sudo mount --bind /run <<buildPath()>>chroot/run")
+#+end_src
+
+
+#+begin_src elisp :noweb yes
+(+tmux/run "clear")
+#+end_src
+
+#+RESULTS:
+
+#+begin_src elisp :noweb yes
+(+tmux/run "sudo chroot <<buildPath()>>chroot")
+#+end_src
+
 
 * in chroot env
 
@@ -56,6 +67,9 @@ export LC_ALL=C
 #+begin_src bash
 dmenu -p "custom hostname"|xclip
 #+end_src
+echo "ubuntu-fs-live" > /etc/hostname
+
+#+RESULTS:
 
 
 * packages and realated configuration
@@ -96,7 +110,7 @@ apt-get install -y libterm-readline-gnu-perl systemd-sysv
 
 * optional packages
 #+begin_src bash :eval never
-apt-get install -y vim vi nano neovim
+apt-get install -y neovim
 #+end_src
 
 * Configure machine-id and divert
@@ -154,12 +168,11 @@ apt-get install -y \
 	grub-gfxpayload-lists \
 	grub-pc \
 	grub-pc-bin \
-	grub2-common \
-	cmst
+	grub2-common
 #+end_src
 
 #+begin_src bash
-apt-get install -y --no-install-recommends linux-generic ubuntu-standard
+apt-get install -y --no-install-recommends linux-generic ubuntu-standard cmst
 #+end_src
 
 
@@ -194,16 +207,45 @@ apt-get install -y \
 #+end_src
 
 
-#+begin_src bash
+* install pacstall-develop
+# Pacstall (develop branch installer)
 
-
-
-
+#+begin_src elisp
+(+tmux/run "curl -fsSL https://git.io/Jue3Z | bash")
 #+end_src
 
+#+begin_src elisp
+(+tmux/run "aptitude install git");;install git
+#+end_src
+#+begin_src emacs-lisp :tangle yes
+(+tmux/run "pacstall -I git");;reinstall git with superior package-manager(compile git)
+#+end_src
+#+begin_src emacs-lisp :tangle yes
+(+tmux/run "pacstall -I pacget-git");;install my personal TUI frontend for pacstall
+#+end_src
+#+begin_src emacs-lisp :tangle yes
+(+tmux/run "pacstall -I emacs-git");;install emacs-git
+#+end_src
+#+begin_src emacs-lisp :tangle yes
+(+tmux/run "aptitude install yadm")
+#+end_src
+
+#+begin_src emacs-lisp :tangle yes
+(+tmux/run "pacstall -I awesome-git");;install awesome-git
+#+end_src
+
+awesome-git
+dmenu-distrotube
+st-distrotube
+emacs-git
+git
+pacget-git
 
 
 
+#+RESULTS:
+
+/usr/share/pacstall/repo/pacstallrepo.txt
 
 
 
