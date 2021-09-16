@@ -2,9 +2,9 @@ name: build-focal
 
 on:
   push:
-    branches: [ master ]
+    branches: [ oldMaster ]
   pull_request:
-    branches: [ master ]
+    branches: [ oldMaster ]
   workflow_dispatch:
 
 jobs:
