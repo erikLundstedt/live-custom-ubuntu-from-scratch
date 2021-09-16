@@ -18,8 +18,8 @@ echo "$HOME/git/projects/customOS/live-ubuntu-from-scratch/"
 
 :eval never
 #+begin_src elisp :noweb yes
- (+tmux/run
-"sudo debootstrap \
+(+tmux/run
+ "sudo debootstrap \
    --arch=amd64 \
    --variant=minbase \
    focal \
@@ -197,11 +197,11 @@ I have changed this from the gtk frontend because i prefer kde based systems
 
 #+begin_src bash
 apt-get install -y \
-   ubiquity \
-   ubiquity-casper \
-   ubiquity-frontend-kde \
-   ubiquity-slideshow-ubuntu \
-   ubiquity-ubuntu-artwork
+	ubiquity \
+	ubiquity-casper \
+	ubiquity-frontend-kde \
+	ubiquity-slideshow-ubuntu \
+	ubiquity-ubuntu-artwork
 #+end_src
 
 
@@ -288,8 +288,8 @@ pacget-git
 
 #+begin_src emacs-lisp :results none
 (+tmux/run "apt-get install -y \
-    openjdk-8-jdk \
-    openjdk-8-jre ")
+	openjdk-8-jdk \
+	openjdk-8-jre ")
 #+end_src
 
 
@@ -298,13 +298,13 @@ pacget-git
 ** remove unused software
 #+begin_src emacs-lisp :results none
 (+tmux/run "apt-get purge -y \
-    transmission-gtk \
-    transmission-common \
-    gnome-mahjongg \
-    gnome-mines \
-    gnome-sudoku \
-    aisleriot \
-    hitori")
+	transmission-gtk \
+	transmission-common \
+	gnome-mahjongg \
+	gnome-mines \
+	gnome-sudoku \
+	aisleriot \
+	hitori")
 #+end_src
 
 
@@ -373,7 +373,7 @@ exit
 #+end_src
 
 #+begin_src emacs-lisp :tangle yes :noweb yes
- (+tmux/run "sudo umount <<buildPath()>>chroot/run")
+(+tmux/run "sudo umount <<buildPath()>>chroot/run")
 
 #+end_src
 
@@ -461,7 +461,7 @@ menuentry \"Test memory Memtest86 (UEFI, long load time)\" {
    chainloader (loop,gpt1)/efi/boot/BOOTX64.efi
 }
 EOF"
-)
+	   )
 #+end_src
 
 
@@ -576,22 +576,22 @@ EOF")
    -volid \"Ubuntu from scratch\" \
    -output \"../ubuntu-from-scratch.iso\" \
    -eltorito-boot boot/grub/bios.img \
-      -no-emul-boot \
-      -boot-load-size 4 \
-      -boot-info-table \
-      --eltorito-catalog boot/grub/boot.cat \
-      --grub2-boot-info \
-      --grub2-mbr /usr/lib/grub/i386-pc/boot_hybrid.img \
+	  -no-emul-boot \
+	  -boot-load-size 4 \
+	  -boot-info-table \
+	  --eltorito-catalog boot/grub/boot.cat \
+	  --grub2-boot-info \
+	  --grub2-mbr /usr/lib/grub/i386-pc/boot_hybrid.img \
    -eltorito-alt-boot \
-      -e EFI/efiboot.img \
-      -no-emul-boot \
+	  -e EFI/efiboot.img \
+	  -no-emul-boot \
    -append_partition 2 0xef isolinux/efiboot.img \
    -m \"isolinux/efiboot.img\" \
    -m \"isolinux/bios.img\" \
    -graft-points \
-      \"/EFI/efiboot.img=isolinux/efiboot.img\" \
-      \"/boot/grub/bios.img=isolinux/bios.img\" \
-      \".\"
+	  \"/EFI/efiboot.img=isolinux/efiboot.img\" \
+	  \"/boot/grub/bios.img=isolinux/bios.img\" \
+	  \".\"
 ")
 #+end_src
 

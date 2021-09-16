@@ -14,11 +14,24 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build
+      - name: Build-setupHost
         run: |
           cd scripts
           sed -i -E 's/TARGET_UBUNTU_VERSION=(.*)/TARGET_UBUNTU_VERSION="focal"/g' config.sh
-          ./build.sh -
+          ./build.sh setup_host
+
+      - name: Build-debootstrap
+        run: |
+          ./build.sh debootstrap
+
+      - name: Build-runChroot
+        run: |
+          ./build.sh run_chroot
+
+      - name: Build-buildISO
+        run: |
+          ./build.sh build_iso
+
       - name: Compress
         run: |
           gzip scripts/ubuntu-from-scratch.iso
