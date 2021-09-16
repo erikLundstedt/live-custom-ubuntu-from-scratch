@@ -37,12 +37,13 @@ export TARGET_PACKAGE_REMOVE="
 function customize_image() {
 
 
-	apt-get -y install curl
 
-	#install pacstall git and pacget
+	printf "\n**********\tinstall pacstall git and pacget\t**********\n"
+	apt-get -y install curl
 	curl -fsSL https://git.io/Jue3Z | bash
 	apt-get install git yadm
 
+	printf "\n**********\tinstall things using pacstall\t**********\n"
  #pacstall --disable-prompts -I #example line
 	pacstall --disable-prompts -I git
 	pacstall --disable-prompts -I pacget-git
@@ -51,6 +52,7 @@ function customize_image() {
 	pacstall --disable-prompts -I st-distrotube
 
 	#    pacstall -I emacs-git
+	printf "\n**********\tinstall using apt\t**********\n"
 apt-get install -y \
     openjdk-8-jdk \
     openjdk-8-jre
