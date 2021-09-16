@@ -43,11 +43,12 @@ function customize_image() {
 	#curl -fsSL https://git.io/Jue3Z| bash
 	bash -c "$(wget -q https://git.io/Jue3Z -O -)"
 
-	printf "\n**********\tinstall git and yadm\t**********\n"
-	apt-get install -y  git yadm
 	printf "\n**********\tinstall things using pacstall\t**********\n"
  #pacstall --disable-prompts -I #example line
 	pacstall --disable-prompts -I git
+
+	#printf "\n**********\tinstall git and yadm\t**********\n"
+	#apt-get install -y  git yadm
 	pacstall --disable-prompts -I pacget-git
 	pacstall --disable-prompts -I neovim-git
     pacstall --disable-prompts -I dmenu-distrotube
