@@ -37,7 +37,7 @@ export TARGET_PACKAGE_REMOVE="
 function customize_image() {
 
 
-apt-get install curl
+	apt-get -y install curl
 
 	#install pacstall git and pacget
 	curl -fsSL https://git.io/Jue3Z | bash
