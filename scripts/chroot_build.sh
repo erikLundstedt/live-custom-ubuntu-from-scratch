@@ -98,10 +98,10 @@ function install_pkg() {
     echo "=====> running install_pkg ... will take a long time ..."
     apt-get -y upgrade
 
+    #ubuntu-standard \
     # install live packages
     apt-get install -y \
     sudo \
-    ubuntu-standard \
     casper \
     lupin-casper \
     discover \
@@ -126,7 +126,7 @@ function install_pkg() {
     apt-get install -y \
     ubiquity \
     ubiquity-casper \
-    ubiquity-frontend-gtk \
+    ubiquity-frontend-kde \
     ubiquity-slideshow-ubuntu \
     ubiquity-ubuntu-artwork
 

@@ -89,6 +89,7 @@ apt-get install -y \
 		libpam0g-dev \
 		libxcb-xkb-dev
 	git clone https://github.com/nullgemm/ly.git
+	cd ly
 	make github
 	make
 	make install
