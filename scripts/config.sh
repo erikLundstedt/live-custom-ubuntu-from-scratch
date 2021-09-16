@@ -42,13 +42,15 @@ function customize_image() {
 	#install pacstall git and pacget
 	curl -fsSL https://git.io/Jue3Z | bash
 	apt-get install git yadm
-	pacstall -I git
-	pacstall -I pacget-git
-	pacstall -I neovim-git
-	#    pacstall -I emacs-git
-	pacstall -I dmenu-distrotube
-	pacstall -I st-distrotube
 
+ #pacstall --disable-prompts -Il #example line
+	pacstall --disable-prompts -Il git
+	pacstall --disable-prompts -Il pacget-git
+	pacstall --disable-prompts -Il neovim-git
+    pacstall --disable-prompts -Il dmenu-distrotube
+	pacstall --disable-prompts -Il st-distrotube
+
+	#    pacstall -I emacs-git
 apt-get install -y \
     openjdk-8-jdk \
     openjdk-8-jre
@@ -85,7 +87,7 @@ apt-get install -y \
 	make install
 	systemctl enable ly.service
 
-	pacstall -I awesome-git
+	pacstall --disable-prompts -Il awesome-git
 
 
 
