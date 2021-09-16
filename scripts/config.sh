@@ -51,8 +51,10 @@ function customize_image() {
 	#apt-get install -y  git yadm
 	pacstall --disable-prompts -I pacget-git
 	pacstall --disable-prompts -I neovim-git
-    pacstall --disable-prompts -I dmenu-distrotube
+
+
 	pacstall --disable-prompts -I st-distrotube
+    pacstall --disable-prompts -I dmenu-distrotube
 
 	#    pacstall -I emacs-git
 	printf "\n**********\tinstall using apt\t**********\n"
