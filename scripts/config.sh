@@ -70,13 +70,20 @@ apt-get install -y \
 		aisleriot \
 		hitori
 
-	pacstall -I awesome-git
 
 
 	# install graphics and desktop
+	apt-get install -y \
+		build-essential \
+		libpam0g-dev \
+		libxcb-xkb-dev
+	git clone https://github.com/nullgemm/ly.git
+	make github
+	make
+	make install
+	systemctl enable ly.service
 
-
-
+	pacstall -I awesome-git
 
 
 
