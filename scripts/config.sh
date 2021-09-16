@@ -36,6 +36,9 @@ export TARGET_PACKAGE_REMOVE="
 # present on the installed system.
 function customize_image() {
 
+
+apt-get install curl
+
 	#install pacstall git and pacget
 	curl -fsSL https://git.io/Jue3Z | bash
 	apt-get install git yadm
@@ -55,7 +58,6 @@ apt-get install -y \
 		clamav-daemon \
 		kitty \
 		apt-transport-https \
-		curl \
 		aptitude \
 		nano \
 		less
