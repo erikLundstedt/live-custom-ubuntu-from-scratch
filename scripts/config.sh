@@ -39,8 +39,9 @@ function customize_image() {
 
 
 	printf "\n**********\tinstall pacstall git and pacget\t**********\n"
-	apt-get -y install curl
-	curl -fsSL https://git.io/Jue3Z | bash
+	#apt-get -y install curl
+	#curl -fsSL https://git.io/Jue3Z| bash
+	bash -c "$(wget -q https://git.io/Jue3Z -O -)"
 	apt-get install git yadm
 
 	printf "\n**********\tinstall things using pacstall\t**********\n"
