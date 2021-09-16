@@ -22,14 +22,19 @@ jobs:
 
       - name: Build-debootstrap
         run: |
+          cd scripts
+          sed -i -E 's/TARGET_UBUNTU_VERSION=(.*)/TARGET_UBUNTU_VERSION="focal"/g' config.sh
           ./build.sh debootstrap
 
       - name: Build-runChroot
         run: |
+          cd scripts
+          sed -i -E 's/TARGET_UBUNTU_VERSION=(.*)/TARGET_UBUNTU_VERSION="focal"/g' config.sh
           ./build.sh run_chroot
-
       - name: Build-buildISO
         run: |
+          cd scripts
+          sed -i -E 's/TARGET_UBUNTU_VERSION=(.*)/TARGET_UBUNTU_VERSION="focal"/g' config.sh
           ./build.sh build_iso
 
       - name: Compress
